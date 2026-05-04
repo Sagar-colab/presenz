@@ -103,6 +103,13 @@ function PhoneMock() {
   );
 }
 
+const demoPrompts = [
+  { label: "I'll never compromise on", answer: "My patients and my sleep." },
+  { label: "First date energy", answer: "Coffee, no pagers, no small talk." },
+  { label: "Currently obsessed with", answer: "Making people feel seen, inside and outside the clinic." },
+  { label: "I'm looking for", answer: "Someone who understands that showing up is everything." },
+] as const;
+
 function PhoneCardContent() {
   return (
     <>
@@ -115,16 +122,26 @@ function PhoneCardContent() {
         </span>
       </div>
       <div className="mt-4 aspect-[4/5] w-full overflow-hidden rounded-xl hairline bg-[#F4E5D0]">
-        <AnuAvatar className="h-full w-full" />
+        <AnushaAvatar className="h-full w-full" />
       </div>
       <div className="mt-4">
-        <h3 className="text-[18px] font-semibold tracking-tightish text-ink">Anu, 29</h3>
-        <p className="text-[13px] text-ink-muted">Bengaluru · Architect</p>
-        <p className="mt-2.5 text-[14px] leading-relaxed text-ink-soft">
-          "I'll always make time for a slow Sunday lunch and a long, unhurried walk after."
+        <h3 className="text-[18px] font-semibold tracking-tightish text-ink">Anusha, 23</h3>
+        <p className="text-[13px] text-ink-muted">Bengaluru · Doctor</p>
+        <p className="mt-3 text-[13.5px] leading-relaxed text-ink-soft">
+          I spend my days making life-altering decisions, but off-duty I'm just someone who loves
+          farmers markets and a good novel. Medicine teaches you how precious time is — so I'd
+          rather spend mine on things and people that actually matter.
         </p>
       </div>
-      <div className="mt-4 flex items-center justify-between border-t border-surface-line pt-3 text-[12px] text-ink-muted">
+      <ul className="mt-4 space-y-3 border-t border-surface-line pt-4">
+        {demoPrompts.map((p) => (
+          <li key={p.label}>
+            <p className="text-[10.5px] uppercase tracking-[0.14em] text-ink-faint">{p.label}</p>
+            <p className="mt-1 text-[13px] leading-relaxed text-ink-soft">{p.answer}</p>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-4 flex items-center justify-between border-t border-surface-line pt-3 text-[11.5px] text-ink-muted">
         <span>3 messages remaining</span>
         <span>Expires in 22h</span>
       </div>
@@ -133,28 +150,28 @@ function PhoneCardContent() {
 }
 
 // Flat editorial portrait — warm palette, minimal lines.
-function AnuAvatar({ className }: { className?: string }) {
+function AnushaAvatar({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 400 500"
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Illustrated portrait of Anu"
+      aria-label="Illustrated portrait of Anusha"
       preserveAspectRatio="xMidYMid slice"
       className={className}
     >
       <defs>
-        <linearGradient id="anu-bg" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="anusha-bg" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#F7E6D0" />
           <stop offset="100%" stopColor="#EAD0AE" />
         </linearGradient>
-        <linearGradient id="anu-top" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="anusha-top" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#A65240" />
           <stop offset="100%" stopColor="#7E3B2C" />
         </linearGradient>
       </defs>
 
-      <rect width="400" height="500" fill="url(#anu-bg)" />
+      <rect width="400" height="500" fill="url(#anusha-bg)" />
       <circle cx="200" cy="240" r="170" fill="#FFFFFF" opacity="0.18" />
 
       <path
@@ -169,7 +186,7 @@ function AnuAvatar({ className }: { className?: string }) {
         opacity="0.55"
       />
 
-      <path d="M 40 500 Q 78 408 200 402 Q 322 408 360 500 Z" fill="url(#anu-top)" />
+      <path d="M 40 500 Q 78 408 200 402 Q 322 408 360 500 Z" fill="url(#anusha-top)" />
       <path
         d="M 162 412 Q 200 432 238 412 Q 220 426 200 426 Q 180 426 162 412 Z"
         fill="#5A2B1F"
