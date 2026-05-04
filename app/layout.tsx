@@ -41,6 +41,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className={inter.variable}>
       <body className="font-sans antialiased text-ink bg-surface">
         <AuthProvider>{children}</AuthProvider>
+        <footer
+          aria-label="Site credit"
+          className="border-t border-surface-line bg-white py-5 text-center"
+        >
+          <p className="text-[12px] tracking-wide text-ink-faint">
+            Created &amp; developed by{" "}
+            <span className="font-medium text-ink-muted">Sagar U</span>
+          </p>
+        </footer>
       </body>
     </html>
   );
