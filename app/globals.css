@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #534AB7;
+  --primary-soft: #F4F3FB;
+  --ink: #0F0F14;
+  --ink-soft: #3A3A44;
+  --ink-muted: #6B6B78;
+  --ink-faint: #A8A8B3;
+  --surface: #FFFFFF;
+  --surface-alt: #FAFAFB;
+  --line: #ECECEF;
+}
+
+html, body {
+  background: var(--surface);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--primary); color: white; }
+
+/* Hairline border utility used across cards */
+.hairline { box-shadow: inset 0 0 0 0.5px var(--line); }
+
+/* Calm focus ring — visible but not loud */
+:where(button, a, input, textarea, select):focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Discourage screenshots / casual copy on sensitive surfaces (heuristic only) */
+.no-screenshot {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+/* Subtle shimmer for loading states */
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.shimmer {
+  background: linear-gradient(90deg, var(--surface-alt) 0%, var(--line) 50%, var(--surface-alt) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s linear infinite;
+}
+
+/* Liveness scan ring */
+@keyframes pulse-ring {
+  0%   { transform: scale(0.96); opacity: 0.7; }
+  50%  { transform: scale(1.04); opacity: 1; }
+  100% { transform: scale(0.96); opacity: 0.7; }
+}
+.pulse-ring { animation: pulse-ring 2.4s ease-in-out infinite; }
+
+/* Step transitions */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.fade-up { animation: fade-up 320ms ease-out both; }

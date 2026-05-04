@@ -1,0 +1,199 @@
+// Présenz — data model
+// Trust + intentionality first. Hard caps at the schema level where the product spec demands them.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  NONBINARY
+  PREFER_NOT_TO_SAY
+}
+
+enum LookingFor {
+  MEN
+  WOMEN
+  EVERYONE
+}
+
+enum MatchStatus {
+  PENDING
+  ACTIVE
+  EXPIRED
+  CLOSED
+}
+
+enum ProposalStatus {
+  PENDING
+  ACCEPTED
+  COUNTERED
+  PASSED
+  CANCELLED
+}
+
+enum FlagStatus {
+  OPEN
+  REVIEWING
+  ACTIONED
+  DISMISSED
+}
+
+enum DateType {
+  COFFEE
+  WALK
+  MEAL
+  DRINK
+  ACTIVITY
+  OTHER
+}
+
+model User {
+  id              String   @id @default(cuid())
+  name            String?
+  age             Int?
+  city            String?
+  phone           String   @unique
+  gender          Gender?
+  lookingFor      LookingFor?
+  aadhaarVerified Boolean  @default(false)
+  aadhaarLast4    String?
+  faceVerified    Boolean  @default(false)
+  phoneVerified   Boolean  @default(false)
+  profileComplete Boolean  @default(false)
+  trustScore      Int      @default(0)
+  isAdmin         Boolean  @default(false)
+  isBanned        Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  profile         Profile?
+  matchesAsUser1  Match[]  @relation("MatchUser1")
+  matchesAsUser2  Match[]  @relation("MatchUser2")
+  proposalsMade   DateProposal[] @relation("ProposalAuthor")
+  messages        Message[]
+  ratingsGiven    DateRating[]   @relation("RatedBy")
+  flagsReported   Flag[]   @relation("FlagReporter")
+  flagsReceived   Flag[]   @relation("FlagSubject")
+  otpAttempts     OtpAttempt[]
+
+  @@index([phone])
+  @@index([city])
+}
+
+model Profile {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  intro       String?  @db.VarChar(300)
+  prompt1Key  String?
+  prompt1     String?  @db.VarChar(500)
+  prompt2Key  String?
+  prompt2     String?  @db.VarChar(500)
+  prompt3Key  String?
+  prompt3     String?  @db.VarChar(500)
+  prompt4Key  String?
+  prompt4     String?  @db.VarChar(500)
+  photos      String[] @default([])
+  interests   String[] @default([])
+  updatedAt   DateTime @updatedAt
+  createdAt   DateTime @default(now())
+}
+
+model Match {
+  id        String      @id @default(cuid())
+  user1Id   String
+  user2Id   String
+  user1     User        @relation("MatchUser1", fields: [user1Id], references: [id])
+  user2     User        @relation("MatchUser2", fields: [user2Id], references: [id])
+  status    MatchStatus @default(PENDING)
+  expiresAt DateTime
+  createdAt DateTime    @default(now())
+
+  proposals DateProposal[]
+  messages  Message[]
+  ratings   DateRating[]
+
+  @@unique([user1Id, user2Id])
+  @@index([user1Id])
+  @@index([user2Id])
+  @@index([status])
+}
+
+model DateProposal {
+  id          String         @id @default(cuid())
+  matchId     String
+  match       Match          @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  proposedBy  String
+  author      User           @relation("ProposalAuthor", fields: [proposedBy], references: [id])
+  venue       String         @db.VarChar(200)
+  dateType    DateType
+  timeSlot1   DateTime
+  timeSlot2   DateTime
+  status      ProposalStatus @default(PENDING)
+  createdAt   DateTime       @default(now())
+
+  @@index([matchId])
+  @@index([proposedBy])
+}
+
+// Hard cap of 3 messages per match enforced at API layer; index supports the count query cheaply.
+model Message {
+  id        String   @id @default(cuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  senderId  String
+  sender    User     @relation(fields: [senderId], references: [id])
+  content   String   @db.VarChar(800)
+  createdAt DateTime @default(now())
+
+  @@index([matchId, createdAt])
+  @@index([senderId])
+}
+
+model DateRating {
+  id        String   @id @default(cuid())
+  matchId   String
+  match     Match    @relation(fields: [matchId], references: [id], onDelete: Cascade)
+  ratedBy   String
+  rater     User     @relation("RatedBy", fields: [ratedBy], references: [id])
+  rating    Int
+  createdAt DateTime @default(now())
+
+  @@unique([matchId, ratedBy])
+}
+
+model Flag {
+  id            String     @id @default(cuid())
+  reportedUser  String
+  subject       User       @relation("FlagSubject", fields: [reportedUser], references: [id])
+  reportedBy    String
+  reporter      User       @relation("FlagReporter", fields: [reportedBy], references: [id])
+  reason        String     @db.VarChar(500)
+  status        FlagStatus @default(OPEN)
+  createdAt     DateTime   @default(now())
+
+  @@index([reportedUser])
+  @@index([status])
+}
+
+// OTP state lives in the DB so attempt-counting + expiry survive serverless restarts.
+model OtpAttempt {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  phone      String
+  codeHash   String
+  attempts   Int      @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime @default(now())
+
+  @@index([phone, createdAt])
+}
