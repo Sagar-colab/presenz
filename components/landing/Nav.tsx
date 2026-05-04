@@ -11,13 +11,13 @@ export function Nav() {
         <nav className="flex items-center gap-1 text-[14px]">
           <Link
             href="/onboarding"
-            className="rounded-xl px-3.5 py-2 text-ink-soft hover:bg-surface-alt"
+            className="rounded-xl px-3.5 py-2 text-ink-soft transition-all duration-150 hover:bg-surface-alt active:scale-[0.97]"
           >
             Sign in
           </Link>
           <Link
             href="/onboarding"
-            className="rounded-xl bg-primary px-4 py-2 text-white hover:bg-primary-600"
+            className="rounded-xl bg-primary px-4 py-2 text-white transition-all duration-150 hover:bg-primary-600 active:scale-[0.97]"
           >
             Get invite
           </Link>

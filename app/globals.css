@@ -5,6 +5,7 @@
 :root {
   --primary: #534AB7;
   --primary-soft: #F4F3FB;
+  --teal: #4AB7A8;
   --ink: #0F0F14;
   --ink-soft: #3A3A44;
   --ink-muted: #6B6B78;
@@ -12,6 +13,10 @@
   --surface: #FFFFFF;
   --surface-alt: #FAFAFB;
   --line: #ECECEF;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 html, body {
@@ -40,6 +45,8 @@ html, body {
   user-select: none;
 }
 
+/* ---------- Animation primitives --------------------------------------- */
+
 /* Subtle shimmer for loading states */
 @keyframes shimmer {
   0% { background-position: -200% 0; }
@@ -59,9 +66,69 @@ html, body {
 }
 .pulse-ring { animation: pulse-ring 2.4s ease-in-out infinite; }
 
-/* Step transitions */
+/* Step transitions on multi-step flows */
 @keyframes fade-up {
   from { opacity: 0; transform: translateY(8px); }
   to   { opacity: 1; transform: translateY(0); }
 }
 .fade-up { animation: fade-up 320ms ease-out both; }
+
+/* Scroll-reveal — paired with components/landing/Reveal.tsx */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1),
+              transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Soft drift for hero blobs — orbits the section slowly */
+@keyframes drift-a {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(40px, 30px, 0) scale(1.05); }
+}
+@keyframes drift-b {
+  0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+  50%      { transform: translate3d(-30px, 40px, 0) scale(1.08); }
+}
+.drift-a { animation: drift-a 18s ease-in-out infinite; }
+.drift-b { animation: drift-b 22s ease-in-out infinite; }
+
+/* Gentle vertical float for the phone mock */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+.float { animation: float 6s ease-in-out infinite; }
+
+/* Glow pulse — soft halo behind the phone card */
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50%      { opacity: 0.85; transform: scale(1.06); }
+}
+.glow-pulse { animation: glow-pulse 5s ease-in-out infinite; }
+
+/* Verified badge — green ripple ring */
+@keyframes verify-pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(31, 138, 76, 0.45); }
+  70%  { box-shadow: 0 0 0 8px rgba(31, 138, 76, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(31, 138, 76, 0); }
+}
+.verify-pulse { animation: verify-pulse 2.4s ease-out infinite; }
+
+/* Honour reduced-motion preference everywhere */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .shimmer, .pulse-ring, .drift-a, .drift-b, .float, .glow-pulse, .verify-pulse {
+    animation: none !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

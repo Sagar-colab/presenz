@@ -30,8 +30,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         disabled={disabled || loading}
         className={cn(
-          "inline-flex items-center justify-center gap-2 rounded-xl font-medium tracking-tightish transition-colors",
-          "disabled:cursor-not-allowed disabled:opacity-70",
+          "inline-flex items-center justify-center gap-2 rounded-xl font-medium tracking-tightish",
+          "transition-all duration-150 ease-out active:scale-[0.97]",
+          "disabled:cursor-not-allowed disabled:opacity-70 disabled:active:scale-100",
           variantClasses[variant],
           sizeClasses[size],
           className,
