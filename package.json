@@ -2,6 +2,11 @@
   "name": "presenz",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=18.18.0 <23",
+    "pnpm": ">=9"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -34,5 +39,8 @@
     "prisma": "^5.22.0",
     "tailwindcss": "^3.4.15",
     "typescript": "^5.6.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@prisma/client", "@prisma/engines", "prisma"]
   }
 }
