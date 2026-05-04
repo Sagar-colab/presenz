@@ -85,7 +85,7 @@ export function PhoneStep() {
         <header className="space-y-2">
           <h1 className="text-[28px] tracking-tightish text-ink">What's your number?</h1>
           <p className="text-[15px] leading-relaxed text-ink-muted">
-            We'll text you a six-digit code. Indian mobile numbers only — Présenz is currently
+            We'll text you a six-digit code. Indian mobile numbers only — Presenz is currently
             invitation-only in India.
           </p>
         </header>

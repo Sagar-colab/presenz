@@ -6,7 +6,7 @@ export function Footer() {
       <div className="rounded-2xl hairline bg-white p-8 md:p-10">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-[13px] uppercase tracking-[0.18em] text-ink-faint">Présenz</p>
+            <p className="text-[13px] uppercase tracking-[0.18em] text-ink-faint">Presenz</p>
             <p className="mt-2 max-w-prose text-[15.5px] leading-relaxed text-ink-soft">
               We built this for people who want to meet, not message. One match a day. Three
               messages. Then a real date.
@@ -20,10 +20,14 @@ export function Footer() {
             <Link href="/contact" className="hover:text-ink">Contact</Link>
           </div>
         </div>
-        <div className="mt-8 flex items-center justify-between border-t border-surface-line pt-5 text-[12.5px] text-ink-faint">
-          <span>© {new Date().getFullYear()} Présenz</span>
+        <div className="mt-8 flex flex-col gap-2 border-t border-surface-line pt-5 text-[12.5px] text-ink-faint md:flex-row md:items-center md:justify-between">
+          <span>© {new Date().getFullYear()} Presenz</span>
           <span>Made in India · Verified humans only</span>
         </div>
+        <p className="mt-3 text-center text-[12.5px] text-ink-muted md:text-right">
+          Created &amp; developed by{" "}
+          <span className="font-medium text-ink-soft">Sagar U</span>
+        </p>
       </div>
     </footer>
   );

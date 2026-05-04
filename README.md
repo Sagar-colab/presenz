@@ -1,4 +1,4 @@
-# Présenz
+# Presenz
 
 > Meet in person. Or not at all.
 
@@ -31,7 +31,7 @@ In dev, all third-party integrations are stubbed:
 
 ## Deploying to Vercel
 
-Présenz is configured to deploy to Vercel out of the box (`vercel.json`, frozen-lockfile install, Mumbai region, Prisma generate in build, function memory tuned for image-processing routes).
+Presenz is configured to deploy to Vercel out of the box (`vercel.json`, frozen-lockfile install, Mumbai region, Prisma generate in build, function memory tuned for image-processing routes).
 
 ### One-time prerequisites
 
@@ -180,3 +180,9 @@ Before flipping to real users:
 - [ ] Add Sentry / observability
 - [ ] Enable Vercel Web Analytics
 - [ ] Add a backup schedule on the production database
+
+---
+
+## Credits
+
+Presenz was created and developed by **Sagar U** — built from scratch as a premium dating experience for real connections in India.

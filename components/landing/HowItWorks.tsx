@@ -30,7 +30,7 @@ export function HowItWorks() {
           Built for people who'd rather meet than message.
         </h2>
         <p className="mt-4 max-w-prose text-[16px] leading-relaxed text-ink-soft">
-          Présenz is shaped by a single belief: chemistry happens in person. Everything we do is in
+          Presenz is shaped by a single belief: chemistry happens in person. Everything we do is in
           service of getting you to a good first date.
         </p>
       </div>

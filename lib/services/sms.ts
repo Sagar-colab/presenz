@@ -10,7 +10,7 @@ class TwilioSmsService implements SmsService {
     const sid = process.env.TWILIO_ACCOUNT_SID!;
     const token = process.env.TWILIO_AUTH_TOKEN!;
     const from = process.env.TWILIO_FROM_NUMBER!;
-    const body = `Your Présenz code is ${code}. It expires in 10 minutes.`;
+    const body = `Your Presenz code is ${code}. It expires in 10 minutes.`;
     const params = new URLSearchParams({ To: toE164, From: from, Body: body });
 
     const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {

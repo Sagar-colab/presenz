@@ -1,7 +1,7 @@
 import { OnboardingShell } from "@/components/onboarding/Shell";
 import { AadhaarStep } from "@/components/onboarding/AadhaarStep";
 
-export const metadata = { title: "Verify Aadhaar — Présenz" };
+export const metadata = { title: "Verify Aadhaar — Presenz" };
 
 export default function VerifyAadhaarPage() {
   return (

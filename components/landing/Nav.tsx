@@ -5,7 +5,7 @@ export function Nav() {
   return (
     <header className="w-full">
       <div className="mx-auto max-w-6xl flex items-center justify-between px-6 py-5">
-        <Link href="/" aria-label="Présenz home">
+        <Link href="/" aria-label="Presenz home">
           <Logo />
         </Link>
         <nav className="flex items-center gap-1 text-[14px]">

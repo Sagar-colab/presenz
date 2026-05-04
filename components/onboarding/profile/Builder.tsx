@@ -90,7 +90,7 @@ export function ProfileBuilder() {
     <div className="min-h-screen bg-surface-alt">
       <header className="border-b border-surface-line bg-white">
         <div className="mx-auto max-w-2xl px-6 py-4 flex items-center justify-between">
-          <Link href="/" aria-label="Présenz home"><Logo /></Link>
+          <Link href="/" aria-label="Presenz home"><Logo /></Link>
           <button
             type="button"
             onClick={() => router.push("/dashboard")}

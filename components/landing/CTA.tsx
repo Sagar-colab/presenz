@@ -5,7 +5,7 @@ export function CTA() {
     <section className="mx-auto max-w-6xl px-6 py-12">
       <div className="rounded-2xl bg-ink p-10 md:p-14 text-white">
         <p className="text-[12.5px] uppercase tracking-[0.22em] text-white/60">
-          Présenz · Invitation only
+          Presenz · Invitation only
         </p>
         <h2 className="mt-4 max-w-3xl text-[32px] tracking-tightish md:text-[40px]">
           Less app. More date.

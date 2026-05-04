@@ -76,7 +76,7 @@ export function AadhaarStep() {
 
       <div className="rounded-xl bg-surface-alt hairline p-4 text-[13px] leading-relaxed text-ink-muted">
         <strong className="text-ink-soft">Why we ask:</strong> verified identity is the foundation
-        of trust on Présenz. Every member completes this step. Your Aadhaar is sent over a TLS
+        of trust on Presenz. Every member completes this step. Your Aadhaar is sent over a TLS
         connection to UIDAI / DigiLocker and is never stored on our servers.
       </div>
 

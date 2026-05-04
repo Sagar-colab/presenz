@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Logo } from "@/components/ui/Logo";
 import { Card, CardBody, CardTitle } from "@/components/ui/Card";
 
-export const metadata = { title: "Dashboard — Présenz" };
+export const metadata = { title: "Dashboard — Presenz" };
 
 export default function DashboardStubPage() {
   return (

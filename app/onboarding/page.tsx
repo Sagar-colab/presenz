@@ -1,7 +1,7 @@
 import { OnboardingShell } from "@/components/onboarding/Shell";
 import { PhoneStep } from "@/components/onboarding/PhoneStep";
 
-export const metadata = { title: "Sign up — Présenz" };
+export const metadata = { title: "Sign up — Presenz" };
 
 export default function OnboardingPage() {
   return (

@@ -1,7 +1,7 @@
 import { OnboardingShell } from "@/components/onboarding/Shell";
 import { FaceStep } from "@/components/onboarding/FaceStep";
 
-export const metadata = { title: "Live face scan — Présenz" };
+export const metadata = { title: "Live face scan — Presenz" };
 
 export default function VerifyFacePage() {
   return (

@@ -10,13 +10,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Présenz — Meet in person. Or not at all.",
+  title: "Presenz — Meet in person. Or not at all. | Created by Sagar U",
   description:
-    "Présenz matches you with one real person a day. No endless swiping. No ghosting. Just a real date.",
+    "Presenz matches you with one real person a day. No endless swiping. No ghosting. Just a real date. Created and developed by Sagar U.",
   metadataBase: new URL("https://presenz.app"),
+  authors: [{ name: "Sagar U" }],
+  creator: "Sagar U",
   openGraph: {
-    title: "Présenz",
-    description: "Meet in person. Or not at all.",
+    title: "Presenz",
+    description: "Meet in person. Or not at all. Created and developed by Sagar U.",
     type: "website",
   },
   robots: { index: true, follow: true },

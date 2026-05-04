@@ -14,7 +14,7 @@ export function Hero() {
             <span className="text-primary">Or not at all.</span>
           </h1>
           <p className="mt-6 max-w-prose text-[16.5px] leading-relaxed text-ink-soft md:text-[17.5px]">
-            Présenz matches you with one real person a day. No endless swiping. No ghosting. Just a
+            Presenz matches you with one real person a day. No endless swiping. No ghosting. Just a
             real date.
           </p>
           <div className="mt-9 flex flex-wrap items-center gap-3">

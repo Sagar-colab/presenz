@@ -1,4 +1,4 @@
-// Présenz — data model
+// Presenz — data model
 // Trust + intentionality first. Hard caps at the schema level where the product spec demands them.
 
 generator client {
