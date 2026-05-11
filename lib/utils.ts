@@ -10,6 +10,19 @@ export function maskAadhaar(input: string): string {
   return `XXXX-XXXX-${digits.slice(-4)}`;
 }
 
+const IST_OFFSET_MS = (5 * 60 + 30) * 60 * 1000;
+
+// Returns the UTC instant of midnight-in-IST for "today" (Bengaluru time).
+// All Presenz user-facing day-rollover logic should use this — running on
+// Vercel UTC, plain Date defaults to UTC midnight, which lands at 5:30am IST
+// and breaks the "1 match per day" semantics for Indian users.
+export function startOfTodayIST(): Date {
+  const now = Date.now();
+  const ist = new Date(now + IST_OFFSET_MS);
+  ist.setUTCHours(0, 0, 0, 0);
+  return new Date(ist.getTime() - IST_OFFSET_MS);
+}
+
 export function normalisePhoneIN(raw: string): string | null {
   const digits = raw.replace(/\D/g, "");
   // Accept 10-digit Indian mobile or +91 prefixed forms
