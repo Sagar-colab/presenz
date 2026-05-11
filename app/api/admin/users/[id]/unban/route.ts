@@ -11,7 +11,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
   if (!user) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
 
   await prisma.$transaction([
-    prisma.user.update({ where: { id: user.id }, data: { isBanned: false } }),
+    prisma.user.update({ where: { id: user.id }, data: { status: "ACTIVE" } }),
     prisma.trustEvent.create({ data: { userId: user.id, delta: 0, reason: `UNBAN_ISSUED:${adminId}` } }),
   ]);
 

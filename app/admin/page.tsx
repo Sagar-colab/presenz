@@ -12,7 +12,7 @@ export default async function AdminOverviewPage() {
     prisma.match.count({ where: { status: "ACTIVE", createdAt: { gte: startOfDay } } }),
     prisma.dateProposal.count(),
     prisma.dateProposal.count({ where: { status: "ACCEPTED" } }),
-    prisma.user.count({ where: { flagsReceived: { some: { status: "OPEN" } } } }),
+    prisma.user.count({ where: { flagsReceived: { some: { status: "PENDING" } } } }),
   ]);
 
   const stats: { label: string; value: number }[] = [

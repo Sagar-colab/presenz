@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export function UserRowActions({ userId, isBanned }: { userId: string; isBanned: boolean }) {
+type Status = "ACTIVE" | "WARNED" | "SUSPENDED" | "BANNED";
+
+export function UserRowActions({ userId, status }: { userId: string; status: Status }) {
+  const isBanned = status === "BANNED" || status === "SUSPENDED";
   const [busy, setBusy] = useState(false);
   const router = useRouter();
 

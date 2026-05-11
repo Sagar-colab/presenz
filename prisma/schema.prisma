@@ -39,10 +39,17 @@ enum ProposalStatus {
 }
 
 enum FlagStatus {
-  OPEN
+  PENDING
   REVIEWING
-  ACTIONED
+  RESOLVED
   DISMISSED
+}
+
+enum UserStatus {
+  ACTIVE
+  WARNED
+  SUSPENDED
+  BANNED
 }
 
 enum DateType {
@@ -69,7 +76,7 @@ model User {
   profileComplete Boolean  @default(false)
   trustScore      Int      @default(50)
   isAdmin         Boolean  @default(false)
-  isBanned        Boolean  @default(false)
+  status          UserStatus @default(ACTIVE)
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
@@ -178,7 +185,7 @@ model Flag {
   reportedBy    String
   reporter      User       @relation("FlagReporter", fields: [reportedBy], references: [id])
   reason        String     @db.VarChar(500)
-  status        FlagStatus @default(OPEN)
+  status        FlagStatus @default(PENDING)
   resolvedBy    String?
   resolver      User?      @relation("FlagResolver", fields: [resolvedBy], references: [id])
   resolvedAt    DateTime?

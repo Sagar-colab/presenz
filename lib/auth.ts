@@ -66,10 +66,10 @@ export const authOptions: NextAuthOptions = {
       if (token.uid && (!token.stamp || now - token.stamp > CLAIMS_TTL_MS)) {
         const fresh = await prisma.user.findUnique({
           where: { id: token.uid as string },
-          select: { isAdmin: true, isBanned: true },
+          select: { isAdmin: true, status: true },
         });
         token.isAdmin = fresh?.isAdmin ?? false;
-        token.isBanned = fresh?.isBanned ?? false;
+        token.isBanned = fresh?.status === "BANNED" || fresh?.status === "SUSPENDED";
         token.stamp = now;
       }
       return token;

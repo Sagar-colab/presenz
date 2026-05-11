@@ -27,9 +27,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (parsed.flagId) {
     await prisma.flag.update({
       where: { id: parsed.flagId },
-      data: { status: "ACTIONED", resolvedBy: adminId, resolvedAt: new Date(), action: "WARNED" },
+      data: { status: "RESOLVED", resolvedBy: adminId, resolvedAt: new Date(), action: "WARNED" },
     });
   }
+
+  await prisma.user.update({ where: { id: user.id }, data: { status: "WARNED" } });
 
   const sms = getSmsService();
   await sms.sendWarning(user.phone, parsed.reason);

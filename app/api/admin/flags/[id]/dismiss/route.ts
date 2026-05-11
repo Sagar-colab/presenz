@@ -10,7 +10,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
 
   const flag = await prisma.flag.findUnique({ where: { id }, select: { id: true, reportedBy: true, status: true } });
   if (!flag) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
-  if (flag.status !== "OPEN") return NextResponse.json({ ok: false, reason: "already_resolved" }, { status: 409 });
+  if (flag.status !== "PENDING") return NextResponse.json({ ok: false, reason: "already_resolved" }, { status: 409 });
 
   await prisma.flag.update({
     where: { id: flag.id },

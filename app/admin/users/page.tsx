@@ -17,7 +17,7 @@ export default async function AdminUsersPage() {
       aadhaarVerified: true,
       faceVerified: true,
       trustScore: true,
-      isBanned: true,
+      status: true,
       createdAt: true,
     },
   });
@@ -64,14 +64,16 @@ export default async function AdminUsersPage() {
                   </td>
                   <td className="px-3 py-2 text-ink-muted">{u.createdAt.toISOString().slice(0, 10)}</td>
                   <td className="px-3 py-2">
-                    {u.isBanned ? (
-                      <span className="rounded-full bg-red-100 px-2 py-0.5 text-[11px] text-red-800">banned</span>
+                    {u.status === "BANNED" || u.status === "SUSPENDED" ? (
+                      <span className="rounded-full bg-red-100 px-2 py-0.5 text-[11px] text-red-800">{u.status.toLowerCase()}</span>
+                    ) : u.status === "WARNED" ? (
+                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[11px] text-amber-800">warned</span>
                     ) : (
                       <span className="text-ink-muted">active</span>
                     )}
                   </td>
                   <td className="px-3 py-2">
-                    <UserRowActions userId={u.id} isBanned={u.isBanned} />
+                    <UserRowActions userId={u.id} status={u.status} />
                   </td>
                 </tr>
               );

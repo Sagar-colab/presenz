@@ -46,13 +46,13 @@ export async function POST(req: Request) {
 
   await adjustTrustScore(subject.id, TRUST_DELTAS.FLAG_RECEIVED, `FLAG_RECEIVED:${reporterId}`);
 
-  // Auto-suspend if the user has accumulated >= threshold OPEN flags.
+  // Auto-suspend if the user has accumulated >= threshold PENDING flags.
   const openFlagCount = await prisma.flag.count({
-    where: { reportedUser: subject.id, status: "OPEN" },
+    where: { reportedUser: subject.id, status: "PENDING" },
   });
   if (openFlagCount >= AUTO_SUSPEND_THRESHOLD) {
     await prisma.$transaction([
-      prisma.user.update({ where: { id: subject.id }, data: { isBanned: true } }),
+      prisma.user.update({ where: { id: subject.id }, data: { status: "SUSPENDED" } }),
       prisma.trustEvent.create({
         data: { userId: subject.id, delta: 0, reason: `AUTO_SUSPEND:${openFlagCount}_flags` },
       }),

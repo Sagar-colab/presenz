@@ -9,7 +9,7 @@ export default async function AdminFlagsPage() {
     orderBy: [{ status: "asc" }, { createdAt: "desc" }],
     take: 200,
     include: {
-      subject: { select: { id: true, name: true, phone: true, isBanned: true, trustScore: true } },
+      subject: { select: { id: true, name: true, phone: true, status: true, trustScore: true } },
       reporter: { select: { id: true, name: true, phone: true } },
     },
   });
@@ -47,7 +47,7 @@ export default async function AdminFlagsPage() {
                   {f.action && <div className="mt-1 text-[11px] text-ink-faint">{f.action}</div>}
                 </td>
                 <td className="px-3 py-2">
-                  {f.status === "OPEN" ? (
+                  {f.status === "PENDING" ? (
                     <FlagRowActions flagId={f.id} subjectId={f.subject.id} />
                   ) : (
                     <span className="text-[11px] text-ink-faint">resolved</span>

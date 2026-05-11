@@ -21,14 +21,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (!user) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
 
   await prisma.$transaction([
-    prisma.user.update({ where: { id: user.id }, data: { isBanned: true } }),
+    prisma.user.update({ where: { id: user.id }, data: { status: "BANNED" } }),
     prisma.trustEvent.create({ data: { userId: user.id, delta: 0, reason: `BAN_ISSUED:${adminId}` } }),
   ]);
 
   if (parsed.flagId) {
     await prisma.flag.update({
       where: { id: parsed.flagId },
-      data: { status: "ACTIONED", resolvedBy: adminId, resolvedAt: new Date(), action: "BANNED" },
+      data: { status: "RESOLVED", resolvedBy: adminId, resolvedAt: new Date(), action: "BANNED" },
     });
   }
 

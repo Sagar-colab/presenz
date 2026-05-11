@@ -43,7 +43,7 @@ export async function findOrCreateTodaysMatch(userId: string): Promise<Match | n
     where: { id: userId },
     include: { profile: true },
   });
-  if (!me || me.isBanned) return null;
+  if (!me || me.status === "BANNED" || me.status === "SUSPENDED") return null;
   if (!me.aadhaarVerified || !me.faceVerified || !me.profileComplete) return null;
 
   // All users we've ever been matched with — exclude from future matching.
@@ -63,7 +63,7 @@ export async function findOrCreateTodaysMatch(userId: string): Promise<Match | n
       aadhaarVerified: true,
       faceVerified: true,
       profileComplete: true,
-      isBanned: false,
+      status: "ACTIVE",
       city: me.city ?? undefined,
       ...compatibility(me),
     },
