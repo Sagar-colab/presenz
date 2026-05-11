@@ -5,6 +5,7 @@ import { Card, CardBody, CardTitle } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Countdown } from "@/components/ui/Countdown";
 import { DashboardActions } from "@/components/dashboard/DashboardActions";
+import { ReportProfileModal } from "@/components/ReportProfileModal";
 import { prisma } from "@/lib/db";
 import { requireUserId } from "@/lib/session";
 import { isMatchParticipant, otherUserId, sweepExpiry } from "@/lib/match";
@@ -12,13 +13,14 @@ import { PROMPTS } from "@/lib/prompts";
 
 export const dynamic = "force-dynamic";
 
-export default async function MatchDetailPage({ params }: { params: { id: string } }) {
+export default async function MatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) redirect("/onboarding");
 
-  await sweepExpiry(params.id);
+  await sweepExpiry(id);
 
-  const match = await prisma.match.findUnique({ where: { id: params.id } });
+  const match = await prisma.match.findUnique({ where: { id: id } });
   if (!match) notFound();
   if (!isMatchParticipant(match, userId)) notFound();
 
@@ -134,6 +136,10 @@ export default async function MatchDetailPage({ params }: { params: { id: string
           ) : (
             <DashboardActions matchId={match.id} otherName={other.name ?? "them"} />
           )}
+
+          <div className="mt-6 flex justify-center">
+            <ReportProfileModal reportedUser={other.id} />
+          </div>
         </div>
       )}
     </AppShell>

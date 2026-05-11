@@ -5,6 +5,7 @@ import { requireUserId } from "@/lib/session";
 import { isValidAadhaar } from "@/lib/utils";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { getAadhaarService } from "@/lib/services/aadhaar";
+import { adjustTrustScore, TRUST_DELTAS } from "@/lib/trust";
 
 const Body = z.object({ aadhaar: z.string().min(12).max(20) });
 
@@ -32,10 +33,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, reason: result.reason }, { status: 400 });
   }
 
+  const before = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { aadhaarVerified: true },
+  });
   await prisma.user.update({
     where: { id: userId },
     data: { aadhaarVerified: true, aadhaarLast4: result.last4 },
   });
+  if (!before?.aadhaarVerified) {
+    await adjustTrustScore(userId, TRUST_DELTAS.AADHAAR_VERIFIED, "AADHAAR_VERIFIED");
+  }
 
   return NextResponse.json({ ok: true, last4: result.last4 });
 }

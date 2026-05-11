@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 import { requireUserId } from "@/lib/session";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 import { getFaceService } from "@/lib/services/face";
+import { adjustTrustScore, TRUST_DELTAS } from "@/lib/trust";
 
 const Body = z.object({ selfie: z.string().startsWith("data:image/").max(8 * 1024 * 1024) });
 
@@ -27,10 +28,17 @@ export async function POST(req: Request) {
     return NextResponse.json({ ok: false, reason: result.reason }, { status: 400 });
   }
 
+  const before = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { faceVerified: true },
+  });
   await prisma.user.update({
     where: { id: userId },
-    data: { faceVerified: true, trustScore: { increment: 30 } },
+    data: { faceVerified: true },
   });
+  if (!before?.faceVerified) {
+    await adjustTrustScore(userId, TRUST_DELTAS.FACE_VERIFIED, "FACE_VERIFIED");
+  }
 
   return NextResponse.json({ ok: true, livenessScore: result.livenessScore, matchScore: result.matchScore });
 }
