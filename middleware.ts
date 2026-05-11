@@ -25,11 +25,15 @@ export async function middleware(req: NextRequest) {
 
   if (pathname.startsWith("/admin")) {
     if (!token) {
+      // eslint-disable-next-line no-console
+      console.log(`[mw] /admin -> /onboarding (no session) path=${pathname}`);
       const url = req.nextUrl.clone();
       url.pathname = "/onboarding";
       return NextResponse.redirect(url);
     }
     if (!token.isAdmin) {
+      // eslint-disable-next-line no-console
+      console.log(`[mw] /admin -> /dashboard (not admin) uid=${token.uid} path=${pathname}`);
       const url = req.nextUrl.clone();
       url.pathname = "/dashboard";
       return NextResponse.redirect(url);

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { requireAdmin } from "@/lib/admin";
+import { getAdminAuthState } from "@/lib/admin";
 
 export const dynamic = "force-dynamic";
 
@@ -12,8 +12,31 @@ const NAV = [
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const adminId = await requireAdmin();
-  if (!adminId) redirect("/dashboard");
+  const state = await getAdminAuthState();
+
+  if (state.kind === "anon") {
+    redirect("/onboarding");
+  }
+
+  if (state.kind === "authed_not_admin") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-surface px-6">
+        <div className="max-w-md text-center">
+          <h1 className="text-[24px] font-semibold tracking-tightish text-ink">Access denied</h1>
+          <p className="mt-4 text-[15px] leading-relaxed text-ink-muted">
+            This area is for Presenz administrators. If you believe you should have access, contact
+            support.
+          </p>
+          <Link
+            href="/dashboard"
+            className="mt-6 inline-block rounded-md bg-primary px-4 py-2 text-[14px] text-white"
+          >
+            Back to dashboard
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col bg-surface md:flex-row">
