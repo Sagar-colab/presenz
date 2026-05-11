@@ -67,7 +67,7 @@ model User {
   faceVerified    Boolean  @default(false)
   phoneVerified   Boolean  @default(false)
   profileComplete Boolean  @default(false)
-  trustScore      Int      @default(0)
+  trustScore      Int      @default(50)
   isAdmin         Boolean  @default(false)
   isBanned        Boolean  @default(false)
   createdAt       DateTime @default(now())
@@ -81,6 +81,8 @@ model User {
   ratingsGiven    DateRating[]   @relation("RatedBy")
   flagsReported   Flag[]   @relation("FlagReporter")
   flagsReceived   Flag[]   @relation("FlagSubject")
+  flagsResolved   Flag[]   @relation("FlagResolver")
+  trustEvents     TrustEvent[]
   otpAttempts     OtpAttempt[]
 
   @@index([phone])
@@ -177,10 +179,25 @@ model Flag {
   reporter      User       @relation("FlagReporter", fields: [reportedBy], references: [id])
   reason        String     @db.VarChar(500)
   status        FlagStatus @default(OPEN)
+  resolvedBy    String?
+  resolver      User?      @relation("FlagResolver", fields: [resolvedBy], references: [id])
+  resolvedAt    DateTime?
+  action        String?    @db.VarChar(50)
   createdAt     DateTime   @default(now())
 
   @@index([reportedUser])
   @@index([status])
+}
+
+model TrustEvent {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  delta     Int
+  reason    String   @db.VarChar(100)
+  createdAt DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 // OTP state lives in the DB so attempt-counting + expiry survive serverless restarts.
