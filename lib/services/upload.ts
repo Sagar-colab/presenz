@@ -2,35 +2,43 @@ import { writeFile, mkdir } from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 
-// Upload service. Cloudinary in prod, local /public/uploads in dev.
+// Upload service. Cloudinary SDK in prod, local /public/uploads in dev.
+// Cloudinary uploads are rooted under the "presenz/" folder.
+
+const CLOUDINARY_ROOT = "presenz";
 
 export interface UploadService {
   uploadDataUrl(dataUrl: string, folder: string): Promise<{ ok: true; url: string } | { ok: false; reason: string }>;
 }
 
+let cloudinaryConfigured = false;
+async function getCloudinary() {
+  const { v2: cloudinary } = await import("cloudinary");
+  if (!cloudinaryConfigured) {
+    cloudinary.config({
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME!,
+      api_key: process.env.CLOUDINARY_API_KEY!,
+      api_secret: process.env.CLOUDINARY_API_SECRET!,
+      secure: true,
+    });
+    cloudinaryConfigured = true;
+  }
+  return cloudinary;
+}
+
 class CloudinaryUploadService implements UploadService {
   async uploadDataUrl(dataUrl: string, folder: string) {
-    const cloud = process.env.CLOUDINARY_CLOUD_NAME!;
-    const key = process.env.CLOUDINARY_API_KEY!;
-    const secret = process.env.CLOUDINARY_API_SECRET!;
-    const ts = Math.floor(Date.now() / 1000);
-    const toSign = `folder=${folder}&timestamp=${ts}${secret}`;
-    const signature = crypto.createHash("sha1").update(toSign).digest("hex");
-
-    const form = new FormData();
-    form.append("file", dataUrl);
-    form.append("folder", folder);
-    form.append("api_key", key);
-    form.append("timestamp", String(ts));
-    form.append("signature", signature);
-
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloud}/image/upload`, {
-      method: "POST",
-      body: form,
-    });
-    if (!res.ok) return { ok: false as const, reason: `cloudinary ${res.status}` };
-    const json = (await res.json()) as { secure_url: string };
-    return { ok: true as const, url: json.secure_url };
+    try {
+      const cloudinary = await getCloudinary();
+      const result = await cloudinary.uploader.upload(dataUrl, {
+        folder: `${CLOUDINARY_ROOT}/${folder}`,
+        resource_type: "image",
+      });
+      return { ok: true as const, url: result.secure_url };
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : "cloudinary error";
+      return { ok: false as const, reason };
+    }
   }
 }
 
@@ -50,6 +58,9 @@ class LocalUploadService implements UploadService {
 }
 
 export function getUploadService(): UploadService {
-  const live = process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET;
+  const live =
+    process.env.CLOUDINARY_CLOUD_NAME &&
+    process.env.CLOUDINARY_API_KEY &&
+    process.env.CLOUDINARY_API_SECRET;
   return live ? new CloudinaryUploadService() : new LocalUploadService();
 }
