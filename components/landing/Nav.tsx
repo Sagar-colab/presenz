@@ -10,6 +10,18 @@ export function Nav() {
         </Link>
         <nav className="flex items-center gap-1 text-[14px]">
           <Link
+            href="/pricing"
+            className="hidden sm:inline-flex rounded-xl px-3.5 py-2 text-ink-soft transition-all duration-150 hover:bg-surface-alt active:scale-[0.97]"
+          >
+            Pricing
+          </Link>
+          <Link
+            href="/waitlist"
+            className="hidden sm:inline-flex rounded-xl px-3.5 py-2 text-ink-soft transition-all duration-150 hover:bg-surface-alt active:scale-[0.97]"
+          >
+            Waitlist
+          </Link>
+          <Link
             href="/onboarding"
             className="rounded-xl px-3.5 py-2 text-ink-soft transition-all duration-150 hover:bg-surface-alt active:scale-[0.97]"
           >
