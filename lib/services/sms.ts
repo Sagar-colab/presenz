@@ -1,32 +1,35 @@
-// Twilio SMS interface. In dev, prints OTP to the server console.
-// To go live: fill TWILIO_* envs and the real branch will activate automatically.
+// Twilio SMS interface. In dev (no TWILIO_* envs), prints OTP to the server console.
+// In prod, uses the official Twilio SDK to send real SMS.
+
+import type { Twilio } from "twilio";
 
 export interface SmsService {
   sendOtp(toE164: string, code: string): Promise<{ ok: true } | { ok: false; reason: string }>;
 }
 
+let twilioClient: Twilio | null = null;
+
+async function getTwilioClient(): Promise<Twilio> {
+  if (twilioClient) return twilioClient;
+  const { default: twilio } = await import("twilio");
+  twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID!, process.env.TWILIO_AUTH_TOKEN!);
+  return twilioClient;
+}
+
 class TwilioSmsService implements SmsService {
   async sendOtp(toE164: string, code: string) {
-    const sid = process.env.TWILIO_ACCOUNT_SID!;
-    const token = process.env.TWILIO_AUTH_TOKEN!;
-    const from = process.env.TWILIO_FROM_NUMBER!;
-    const body = `Your Presenz code is ${code}. It expires in 10 minutes.`;
-    const params = new URLSearchParams({ To: toE164, From: from, Body: body });
-
-    const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
-      method: "POST",
-      headers: {
-        Authorization: `Basic ${Buffer.from(`${sid}:${token}`).toString("base64")}`,
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: params.toString(),
-    });
-
-    if (!res.ok) {
-      const reason = await res.text().catch(() => "twilio error");
+    try {
+      const client = await getTwilioClient();
+      await client.messages.create({
+        to: toE164,
+        from: process.env.TWILIO_FROM_NUMBER!,
+        body: `Your Presenz code is ${code}. It expires in 10 minutes.`,
+      });
+      return { ok: true as const };
+    } catch (err) {
+      const reason = err instanceof Error ? err.message : "twilio error";
       return { ok: false as const, reason };
     }
-    return { ok: true as const };
   }
 }
 
@@ -39,6 +42,9 @@ class StubSmsService implements SmsService {
 }
 
 export function getSmsService(): SmsService {
-  const live = process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_FROM_NUMBER;
+  const live =
+    process.env.TWILIO_ACCOUNT_SID &&
+    process.env.TWILIO_AUTH_TOKEN &&
+    process.env.TWILIO_FROM_NUMBER;
   return live ? new TwilioSmsService() : new StubSmsService();
 }
