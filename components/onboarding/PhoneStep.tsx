@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/Input";
 
 type Mode = "enter" | "code";
 
-export function PhoneStep() {
+export function PhoneStep({ inviteCode }: { inviteCode?: string } = {}) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("enter");
   const [phone, setPhone] = useState("");
@@ -34,7 +34,7 @@ export function PhoneStep() {
       const r = await fetch("/api/otp/send", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ phone }),
+        body: JSON.stringify({ phone, inviteCode }),
       });
       const j = await r.json();
       if (!r.ok || !j.ok) {
@@ -183,6 +183,9 @@ function prettyReason(r: string) {
     locked_out: "Too many wrong attempts. Send a new code.",
     no_active_otp: "Send a new code first.",
     sms_failed: "We couldn't send the code. Try again.",
+    invite_required: "An invite code is required to join.",
+    invite_invalid: "That invite code isn't valid.",
+    invite_used: "That invite has already been used.",
   };
   return map[r] ?? "Something went wrong. Try again.";
 }

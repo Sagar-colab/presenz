@@ -47,10 +47,34 @@ export const authOptions: NextAuthOptions = {
           data: { consumedAt: new Date() },
         });
 
-        const user = await prisma.user.upsert({
+        // Look up whether this is sign-in or sign-up before upserting so we
+        // know whether to consume the invite code from the OtpAttempt.
+        const existing = await prisma.user.findUnique({ where: { phone }, select: { id: true } });
+        if (!existing) {
+          if (!otp.inviteCode) return null;
+          const invite = await prisma.inviteCode.findUnique({
+            where: { code: otp.inviteCode },
+            select: { id: true, isActive: true, usedBy: true },
+          });
+          if (!invite || !invite.isActive || invite.usedBy) return null;
+
+          const created = await prisma.user.create({
+            data: {
+              phone,
+              phoneVerified: true,
+              inviteCode: otp.inviteCode,
+            },
+          });
+          await prisma.inviteCode.update({
+            where: { id: invite.id },
+            data: { usedBy: created.id, usedAt: new Date() },
+          });
+          return { id: created.id, name: null, email: null };
+        }
+
+        const user = await prisma.user.update({
           where: { phone },
-          update: { phoneVerified: true },
-          create: { phone, phoneVerified: true },
+          data: { phoneVerified: true },
         });
         return { id: user.id, name: user.name ?? null, email: null };
       },

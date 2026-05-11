@@ -1,13 +1,9 @@
 import { prisma } from "@/lib/db";
-import type { Match } from "@prisma/client";
+import type { Match, Plan } from "@prisma/client";
+import { startOfTodayIST } from "@/lib/utils";
+import { getDailyMatchCap } from "@/lib/plans";
 
 const MATCH_WINDOW_MS = 72 * 60 * 60 * 1000;
-
-function startOfToday(): Date {
-  const d = new Date();
-  d.setHours(0, 0, 0, 0);
-  return d;
-}
 
 // Auto-expire any past-deadline matches/proposals on read so the UI never
 // has to special-case stale rows.
@@ -23,22 +19,59 @@ export async function sweepExpiry(matchId?: string) {
   });
 }
 
-// Returns today's match for the user (creates one if none exists yet today).
-// "1 per day" is enforced by checking if any match was created today —
-// regardless of status — so passing on today's match doesn't unlock another.
+// Returns today's most-recent match for the user (creates one if none exists
+// yet today). Used by the dashboard initial load — gives every user at least
+// one match attempt per day.
 export async function findOrCreateTodaysMatch(userId: string): Promise<Match | null> {
   await sweepExpiry();
+  const existing = await mostRecentMatchToday(userId);
+  if (existing) return existing;
+  return createMatchFor(userId);
+}
 
-  const today = startOfToday();
-  const existing = await prisma.match.findFirst({
+// Paid-tier "find me another match today" path. Caps per User.plan via
+// getDailyMatchCap(). Returns a structured error so the UI can show an
+// upgrade prompt when the cap is reached.
+export async function requestAnotherMatch(
+  userId: string,
+): Promise<{ match: Match } | { error: "cap_reached"; plan: Plan; cap: number } | { error: "no_candidate" } | { error: "ineligible" }> {
+  await sweepExpiry();
+
+  const me = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { plan: true, status: true, aadhaarVerified: true, faceVerified: true, profileComplete: true },
+  });
+  if (!me) return { error: "ineligible" };
+  if (me.status === "BANNED" || me.status === "SUSPENDED") return { error: "ineligible" };
+  if (!me.aadhaarVerified || !me.faceVerified || !me.profileComplete) return { error: "ineligible" };
+
+  const todayCount = await prisma.match.count({
     where: {
       OR: [{ user1Id: userId }, { user2Id: userId }],
-      createdAt: { gte: today },
+      createdAt: { gte: startOfTodayIST() },
+    },
+  });
+  const cap = getDailyMatchCap(me.plan);
+  if (todayCount >= cap) {
+    return { error: "cap_reached", plan: me.plan, cap };
+  }
+
+  const match = await createMatchFor(userId);
+  if (!match) return { error: "no_candidate" };
+  return { match };
+}
+
+async function mostRecentMatchToday(userId: string): Promise<Match | null> {
+  return prisma.match.findFirst({
+    where: {
+      OR: [{ user1Id: userId }, { user2Id: userId }],
+      createdAt: { gte: startOfTodayIST() },
     },
     orderBy: { createdAt: "desc" },
   });
-  if (existing) return existing;
+}
 
+async function createMatchFor(userId: string): Promise<Match | null> {
   const me = await prisma.user.findUnique({
     where: { id: userId },
     include: { profile: true },
@@ -46,7 +79,6 @@ export async function findOrCreateTodaysMatch(userId: string): Promise<Match | n
   if (!me || me.status === "BANNED" || me.status === "SUSPENDED") return null;
   if (!me.aadhaarVerified || !me.faceVerified || !me.profileComplete) return null;
 
-  // All users we've ever been matched with — exclude from future matching.
   const prior = await prisma.match.findMany({
     where: { OR: [{ user1Id: userId }, { user2Id: userId }] },
     select: { user1Id: true, user2Id: true },
@@ -71,7 +103,6 @@ export async function findOrCreateTodaysMatch(userId: string): Promise<Match | n
   });
   if (!candidate) return null;
 
-  // Sort IDs so the unique [user1Id, user2Id] constraint is order-independent.
   const [u1, u2] = [userId, candidate.id].sort();
   return prisma.match.create({
     data: {
@@ -83,7 +114,6 @@ export async function findOrCreateTodaysMatch(userId: string): Promise<Match | n
   });
 }
 
-// Soft compatibility: respect lookingFor when both sides have set it.
 function compatibility(me: { gender: string | null; lookingFor: string | null }) {
   if (!me.lookingFor || me.lookingFor === "EVERYONE") return {};
   if (me.lookingFor === "MEN") return { gender: "MALE" as const };

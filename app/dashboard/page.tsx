@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/Badge";
 import { Avatar } from "@/components/ui/Avatar";
 import { Countdown } from "@/components/ui/Countdown";
 import { DashboardActions } from "@/components/dashboard/DashboardActions";
+import { RequestAnotherMatchButton } from "@/components/dashboard/RequestAnotherMatchButton";
 import { prisma } from "@/lib/db";
 import { requireUserId } from "@/lib/session";
 import { findOrCreateTodaysMatch, otherUserId } from "@/lib/match";
@@ -96,6 +97,8 @@ export default async function DashboardPage() {
           {!activeProposal && (
             <DashboardActions matchId={match.id} otherName={other.name ?? "them"} />
           )}
+
+          <RequestAnotherMatchButton />
         </div>
       )}
     </AppShell>
