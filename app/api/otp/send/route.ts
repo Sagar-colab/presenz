@@ -51,6 +51,8 @@ export async function POST(req: Request) {
   const sms = getSmsService();
   const result = await sms.sendOtp(phone, code);
   if (!result.ok) {
+    // eslint-disable-next-line no-console
+    console.error(`[otp/send] sms_failed phone=${phone.slice(0, 3)}***${phone.slice(-4)} reason=${result.reason}`);
     return NextResponse.json({ ok: false, reason: "sms_failed" }, { status: 502 });
   }
 

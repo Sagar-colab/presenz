@@ -16,18 +16,32 @@ async function getTwilioClient(): Promise<Twilio> {
   return twilioClient;
 }
 
+function maskPhone(e164: string): string {
+  return e164.length > 4 ? `${e164.slice(0, 3)}***${e164.slice(-4)}` : "***";
+}
+
 class TwilioSmsService implements SmsService {
   async sendOtp(toE164: string, code: string) {
+    const from = process.env.TWILIO_FROM_NUMBER!;
     try {
       const client = await getTwilioClient();
-      await client.messages.create({
+      const msg = await client.messages.create({
         to: toE164,
-        from: process.env.TWILIO_FROM_NUMBER!,
+        from,
         body: `Your Presenz code is ${code}. It expires in 10 minutes.`,
       });
+      // eslint-disable-next-line no-console
+      console.log(
+        `[sms] sent sid=${msg.sid} to=${maskPhone(toE164)} from=${from} status=${msg.status}`,
+      );
       return { ok: true as const };
     } catch (err) {
-      const reason = err instanceof Error ? err.message : "twilio error";
+      const e = err as { code?: number | string; status?: number; message?: string; moreInfo?: string };
+      // eslint-disable-next-line no-console
+      console.error(
+        `[sms] twilio_error to=${maskPhone(toE164)} from=${from} code=${e.code ?? "?"} status=${e.status ?? "?"} message="${e.message ?? "?"}" moreInfo=${e.moreInfo ?? "?"}`,
+      );
+      const reason = `twilio_${e.code ?? "error"}:${e.message ?? "unknown"}`;
       return { ok: false as const, reason };
     }
   }
