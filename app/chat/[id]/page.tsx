@@ -11,11 +11,12 @@ import { formatSlot } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-export default async function ChatPage({ params }: { params: { id: string } }) {
+export default async function ChatPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) redirect("/onboarding");
 
-  const match = await prisma.match.findUnique({ where: { id: params.id } });
+  const match = await prisma.match.findUnique({ where: { id: id } });
   if (!match) notFound();
   if (!isMatchParticipant(match, userId)) notFound();
 

@@ -13,14 +13,15 @@ import { formatSlot } from "@/lib/format";
 
 export const dynamic = "force-dynamic";
 
-export default async function ProposalPage({ params }: { params: { id: string } }) {
+export default async function ProposalPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) redirect("/onboarding");
 
   await sweepExpiry();
 
   const proposal = await prisma.dateProposal.findUnique({
-    where: { id: params.id },
+    where: { id: id },
     include: {
       match: true,
       author: { include: { profile: true } },

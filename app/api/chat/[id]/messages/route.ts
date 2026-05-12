@@ -5,18 +5,19 @@ import { isMatchParticipant } from "@/lib/match";
 
 const MAX_MESSAGES = 3;
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
 
-  const match = await prisma.match.findUnique({ where: { id: params.id } });
+  const match = await prisma.match.findUnique({ where: { id: id } });
   if (!match) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
   if (!isMatchParticipant(match, userId)) {
     return NextResponse.json({ ok: false, reason: "forbidden" }, { status: 403 });
   }
 
   const messages = await prisma.message.findMany({
-    where: { matchId: params.id },
+    where: { matchId: id },
     orderBy: { createdAt: "asc" },
     select: { id: true, senderId: true, content: true, createdAt: true },
   });

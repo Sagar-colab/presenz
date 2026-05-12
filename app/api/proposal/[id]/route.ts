@@ -3,12 +3,13 @@ import { prisma } from "@/lib/db";
 import { requireUserId } from "@/lib/session";
 import { isMatchParticipant, sweepExpiry, otherUserId } from "@/lib/match";
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
 
   const proposal = await prisma.dateProposal.findUnique({
-    where: { id: params.id },
+    where: { id: id },
     include: { match: true, author: { include: { profile: true } } },
   });
   if (!proposal) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });

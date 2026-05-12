@@ -4,7 +4,8 @@ import { requireUserId } from "@/lib/session";
 import { isMatchParticipant } from "@/lib/match";
 import { rateLimit, clientKey } from "@/lib/rate-limit";
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
 
@@ -12,7 +13,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
   if (!limit.ok) return NextResponse.json({ ok: false, reason: "rate_limited" }, { status: 429 });
 
   const proposal = await prisma.dateProposal.findUnique({
-    where: { id: params.id },
+    where: { id: id },
     include: { match: true },
   });
   if (!proposal) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });

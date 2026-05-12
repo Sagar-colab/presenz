@@ -9,11 +9,12 @@ import { isMatchParticipant, otherUserId } from "@/lib/match";
 
 export const dynamic = "force-dynamic";
 
-export default async function CheckinPage({ params }: { params: { id: string } }) {
+export default async function CheckinPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) redirect("/onboarding");
 
-  const match = await prisma.match.findUnique({ where: { id: params.id } });
+  const match = await prisma.match.findUnique({ where: { id: id } });
   if (!match) notFound();
   if (!isMatchParticipant(match, userId)) notFound();
 

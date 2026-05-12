@@ -9,7 +9,8 @@ const MAX_MESSAGES = 3;
 
 const Body = z.object({ content: z.string().min(1).max(800) });
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const userId = await requireUserId();
   if (!userId) return NextResponse.json({ ok: false, reason: "unauthorized" }, { status: 401 });
 
@@ -23,7 +24,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
     return NextResponse.json({ ok: false, reason: "bad_request" }, { status: 400 });
   }
 
-  const match = await prisma.match.findUnique({ where: { id: params.id } });
+  const match = await prisma.match.findUnique({ where: { id: id } });
   if (!match) return NextResponse.json({ ok: false, reason: "not_found" }, { status: 404 });
   if (!isMatchParticipant(match, userId)) {
     return NextResponse.json({ ok: false, reason: "forbidden" }, { status: 403 });
