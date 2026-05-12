@@ -109,6 +109,7 @@ model User {
   subscription    Subscription?
   invitesCreated  InviteCode[] @relation("InviteCreatedBy")
   inviteUsed      InviteCode?  @relation("InviteUsedBy")
+  pushTokens      PushToken[]
 
   @@index([phone])
   @@index([city])
@@ -289,4 +290,18 @@ model RazorpayPlan {
   razorpayPlanId  String   @unique
   amountInrPaise  Int
   createdAt       DateTime @default(now())
+}
+
+// Expo push tokens registered by the mobile app. One user may have multiple
+// devices (phone + tablet) — token is the natural unique key.
+model PushToken {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token      String   @unique
+  platform   String   @db.VarChar(16)
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  @@index([userId])
 }
