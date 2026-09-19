@@ -1,188 +1,527 @@
-# Presenz
+# 💜 Presenz — Intentional Dating, Built for Real Connections
 
-> Meet in person. Or not at all.
+<p align="center">
+  <strong>Meet in person. Or not at all.</strong>
+</p>
 
-A premium dating app built around verified identity, intentional matching, and limited messaging — one match a day, three messages, then meet.
+<p align="center">
+  A premium dating platform built around verified identity,
+  intentional matching, and meaningful real-world connections.
+</p>
 
-## Stack
+<p align="center">
 
-- **Next.js 14** (app router) · TypeScript strict
-- **Tailwind CSS** · Inter · primary `#534AB7`
-- **PostgreSQL + Prisma**
-- **NextAuth** (Credentials provider, phone OTP)
-- Service stubs for **Twilio**, **DigiLocker**, **AWS Rekognition**, **Cloudinary**, **Google Vision** — swap to live by setting env vars
+![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)
+![TypeScript](https://img.shields.io/badge/TypeScript-Strict-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Database-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748?style=for-the-badge&logo=prisma)
+![Vercel](https://img.shields.io/badge/Vercel-Deployed-black?style=for-the-badge&logo=vercel)
 
-## Local quick start
+</p>
+
+---
+
+## 💜 About Presenz
+
+**Presenz** is a premium dating platform designed around a simple idea:
+
+> **Less endless chatting. More meaningful connections in the real world.**
+
+Instead of encouraging unlimited swiping and conversations that never leave the app, Presenz focuses on **verified identities, intentional matching, and limited communication**.
+
+The core experience is built around:
+
+- One match a day
+- Three messages
+- One real date
+
+The platform combines identity verification, curated matching, profile creation, and controlled communication into a single experience.
+
+---
+
+# ✨ Core Features
+
+## 🔐 Verified Identity
+
+Presenz is designed around identity verification rather than anonymous profiles.
+
+The verification architecture supports:
+
+- 📱 Phone number authentication
+- 🔢 OTP-based sign-in
+- 🪪 Aadhaar verification flow
+- 👤 Face verification
+- 🛡️ Identity and profile checks
+
+Third-party verification services can be enabled through environment variables while development uses safe service stubs.
+
+---
+
+## 💜 Intentional Matching
+
+Presenz is designed to encourage quality over quantity.
+
+Instead of unlimited interactions, the product is structured around:
+
+```text
+        One Match
+            ↓
+      Three Messages
+            ↓
+        Real Date
+```
+
+The limited interaction model encourages users to move conversations toward meaningful real-world meetings.
+
+---
+
+## 💬 Limited Messaging
+
+Each match has a controlled messaging experience.
+
+The API layer enforces the messaging limits rather than relying only on frontend restrictions.
+
+This ensures that product rules remain enforced even when requests are made directly against the backend.
+
+---
+
+## 👤 Profile Creation
+
+Users can create profiles with:
+
+- Personal information
+- Interests
+- Profile photographs
+- Verification information
+- Matching preferences
+
+The profile flow is designed to collect the information needed for intentional matching.
+
+---
+
+# 🛡️ Verification & Safety Architecture
+
+Presenz integrates multiple verification services through a modular service architecture.
+
+```text
+                    User
+                      │
+                      ▼
+              ┌───────────────┐
+              │ Phone + OTP   │
+              └───────┬───────┘
+                      │
+                      ▼
+              ┌───────────────┐
+              │ Identity      │
+              │ Verification  │
+              └───────┬───────┘
+                      │
+             ┌────────┴────────┐
+             ▼                 ▼
+       Aadhaar Check      Face Check
+             │                 │
+             └────────┬────────┘
+                      ▼
+              ┌───────────────┐
+              │    Profile    │
+              │   Creation    │
+              └───────┬───────┘
+                      │
+                      ▼
+                  Dashboard
+```
+
+Supported integrations include:
+
+- Twilio
+- DigiLocker
+- AWS Rekognition
+- Cloudinary
+- Google Vision
+
+Development environments use service stubs, allowing the application to run without requiring every third-party integration.
+
+---
+
+# 🏗️ Architecture
+
+Presenz uses a **Next.js App Router architecture** with PostgreSQL and Prisma on the backend.
+
+```text
+                         ┌──────────────────┐
+                         │      User        │
+                         └────────┬─────────┘
+                                  │
+                                  ▼
+                       ┌────────────────────┐
+                       │    Next.js App     │
+                       │    Router + UI     │
+                       └─────────┬──────────┘
+                                 │
+                 ┌───────────────┼────────────────┐
+                 │               │                │
+                 ▼               ▼                ▼
+          Authentication     Profiles         Matching
+                 │               │                │
+                 └───────────────┼────────────────┘
+                                 │
+                                 ▼
+                       ┌────────────────────┐
+                       │     API Routes     │
+                       └─────────┬──────────┘
+                                 │
+                                 ▼
+                       ┌────────────────────┐
+                       │ Prisma ORM         │
+                       └─────────┬──────────┘
+                                 │
+                                 ▼
+                       ┌────────────────────┐
+                       │    PostgreSQL      │
+                       └────────────────────┘
+```
+
+---
+
+# 🛠️ Tech Stack
+
+| Technology | Purpose |
+|---|---|
+| **Next.js 14** | Full-stack web framework |
+| **TypeScript** | Type-safe development |
+| **Tailwind CSS** | UI styling |
+| **PostgreSQL** | Relational database |
+| **Prisma** | Database ORM |
+| **NextAuth** | Authentication |
+| **Twilio** | OTP infrastructure |
+| **DigiLocker** | Identity verification integration |
+| **AWS Rekognition** | Face verification |
+| **Google Vision** | Image safety analysis |
+| **Cloudinary** | Production image storage |
+| **Vercel** | Deployment |
+
+---
+
+# 📂 Project Structure
+
+```text
+presenz/
+│
+├── app/
+│   ├── api/
+│   │   ├── auth/
+│   │   ├── otp/
+│   │   ├── verify/
+│   │   └── profile/
+│   │
+│   ├── onboarding/
+│   ├── verify/
+│   ├── profile/
+│   └── dashboard/
+│
+├── components/
+│   └── UI, landing and onboarding components
+│
+├── lib/
+│   ├── db.ts
+│   ├── auth.ts
+│   ├── session.ts
+│   ├── rate-limit.ts
+│   ├── prompts.ts
+│   └── services/
+│
+├── prisma/
+│   └── schema.prisma
+│
+├── mobile/
+│   └── Expo React Native application
+│
+├── next.config.js
+├── tailwind.config.ts
+├── vercel.json
+└── package.json
+```
+
+---
+
+# 📱 Mobile Application
+
+Presenz also includes an **Expo / React Native mobile application** that communicates with the existing web backend.
+
+### Mobile Stack
+
+- Expo SDK 54
+- React Native 0.81
+- Expo Router 6
+- Axios
+- Expo Secure Store
+- Safe Area Context
+
+The mobile authentication flow supports:
+
+```text
+Invite Code
+     ↓
+Phone Number
+     ↓
+OTP
+     ↓
+JWT Token
+     ↓
+Authenticated App
+```
+
+The mobile application uses bearer-token authentication while continuing to communicate with the existing Presenz backend.
+
+---
+
+# 🔑 Authentication
+
+The authentication system supports:
+
+- Invite-code validation
+- Phone number authentication
+- OTP verification
+- NextAuth sessions
+- Mobile JWT authentication
+
+For mobile clients, authentication tokens are securely stored using **Expo Secure Store**.
+
+The backend supports both:
+
+```text
+NextAuth Cookie
+       +
+Bearer Token
+```
+
+allowing the same backend API architecture to serve both web and mobile clients.
+
+---
+
+# 💳 Subscription System
+
+Presenz includes a subscription architecture powered by **Razorpay**.
+
+The payment system supports:
+
+- Subscription creation
+- Subscription status
+- Subscription cancellation
+- Razorpay webhook verification
+- Plan management
+- Admin plan setup
+
+Webhook signatures are verified using **HMAC SHA-256** before subscription state is updated.
+
+---
+
+# 🧠 Architectural Highlights
+
+### Service Abstraction
+
+Third-party integrations use service factories that can switch between:
+
+```text
+Development
+    ↓
+Service Stub
+
+Production
+    ↓
+Live Provider
+```
+
+This allows the application to be developed and tested without requiring every external service during local development.
+
+---
+
+### 🔒 Server-Side Enforcement
+
+Important product limits are enforced at the API layer rather than relying solely on frontend validation.
+
+Examples include:
+
+- OTP attempt limits
+- Profile photo limits
+- Prompt selection limits
+- Message limits
+- Authentication requirements
+
+---
+
+### 🗄️ Database-Backed OTP State
+
+OTP state is stored in PostgreSQL rather than application memory.
+
+This allows OTP state to survive serverless cold starts.
+
+---
+
+### ⚡ Prisma + Node Runtime
+
+API routes use the Node.js runtime because Prisma requires the Node runtime for the database layer.
+
+---
+
+# 🚀 Local Development
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/Sagar-colab/presenz.git
+
+cd presenz
+```
+
+## 2. Install Dependencies
 
 ```bash
 pnpm install
+```
+
+## 3. Configure Environment Variables
+
+```bash
 cp .env.example .env
-# edit DATABASE_URL and run: openssl rand -base64 32 → paste into NEXTAUTH_SECRET
+```
+
+Configure the required variables, including:
+
+```env
+DATABASE_URL=
+NEXTAUTH_SECRET=
+NEXTAUTH_URL=
+```
+
+Additional variables can be added for third-party integrations.
+
+---
+
+## 4. Initialize the Database
+
+```bash
 pnpm db:push
+```
+
+---
+
+## 5. Start the Development Server
+
+```bash
 pnpm dev
 ```
 
-In dev, all third-party integrations are stubbed:
-- OTPs print to the server console (look for `[stub-sms] → +91… OTP: 123456`)
-- Aadhaar / face / NSFW checks return success after a short delay
-- Photo uploads write to `public/uploads/`
+Open:
+
+```text
+http://localhost:3000
+```
 
 ---
 
-## Deploying to Vercel
+# 🧪 Development Mode
 
-Presenz is configured to deploy to Vercel out of the box (`vercel.json`, frozen-lockfile install, Mumbai region, Prisma generate in build, function memory tuned for image-processing routes).
+During development, external integrations are stubbed when their environment variables are not configured.
 
-### One-time prerequisites
+Examples:
 
-You need:
-1. A **GitHub** account (free)
-2. A **Vercel** account (free, sign up with the GitHub account)
-3. A **Postgres** database accessible from the public internet — easiest options are:
-   - [**Vercel Postgres**](https://vercel.com/storage/postgres) (one click, integrated)
-   - [**Neon**](https://neon.tech) (serverless, generous free tier)
-   - [**Supabase**](https://supabase.com) (managed Postgres, free tier)
-   - [**Railway**](https://railway.app) (paid)
+```text
+OTP
+ ↓
+Printed to server console
 
-### Step 1 — Push to GitHub
+Identity Verification
+ ↓
+Development Stub
 
-You have two options.
+Face Verification
+ ↓
+Development Stub
 
-#### Option A — GitHub CLI (one-liner)
-
-If you have the [`gh` CLI](https://cli.github.com/) installed and authenticated:
-
-```bash
-cd /Users/akhilganatra/presenz
-gh repo create presenz --private --source=. --remote=origin --push
+Photo Upload
+ ↓
+Local Storage
 ```
 
-This creates the repo, sets the remote, and pushes `main` in one command.
-
-#### Option B — Web UI
-
-1. Go to https://github.com/new
-2. Repository name: `presenz`. Visibility: **Private** (you can flip later).
-3. **Do not** tick "add a README", "add .gitignore", or "add license" — we already have those locally.
-4. Click **Create repository**. Copy the `git@github.com:USER/presenz.git` URL.
-5. From your terminal:
-   ```bash
-   cd /Users/akhilganatra/presenz
-   git remote add origin git@github.com:USER/presenz.git
-   git branch -M main
-   git push -u origin main
-   ```
-
-### Step 2 — Apply the schema to your production database
-
-You need to run this **once** before the first deploy, against the prod DB:
-
-```bash
-# from your local machine, with your production DATABASE_URL exported
-DATABASE_URL="postgresql://...prod..." pnpm prisma db push
-```
-
-(For ongoing work you'll graduate to `prisma migrate dev` + `prisma migrate deploy`. For first deploy, `db push` is fine.)
-
-### Step 3 — Connect to Vercel
-
-1. Go to https://vercel.com/new
-2. Click **Import Git Repository** and pick `presenz`. (Authorise Vercel to read the repo if it's the first time.)
-3. **Framework Preset**: Vercel will auto-detect **Next.js**. Leave it.
-4. **Root Directory**: leave blank (project is at the root).
-5. **Build & Output Settings**: leave defaults — `vercel.json` overrides them with the correct Prisma+Next build command.
-6. **Install Command**: leave default — `vercel.json` sets `pnpm install --frozen-lockfile`.
-7. **Don't click Deploy yet.** Open the **Environment Variables** section first.
-
-### Step 4 — Add environment variables in the Vercel dashboard
-
-In the **Environment Variables** panel during the import flow (or later, under **Project → Settings → Environment Variables**), add the following. For each one, select **Production**, **Preview**, and **Development** unless noted otherwise.
-
-| Key | Value | Required |
-|---|---|---|
-| `DATABASE_URL` | Your production Postgres URL | **Yes** |
-| `NEXTAUTH_SECRET` | Output of `openssl rand -base64 32` (use a different value per env) | **Yes** |
-| `NEXTAUTH_URL` | `https://your-vercel-domain.vercel.app` (or your custom domain) | **Yes** |
-| `TWILIO_ACCOUNT_SID` | From Twilio console | Optional — stub used if blank |
-| `TWILIO_AUTH_TOKEN` | From Twilio console | Optional |
-| `TWILIO_FROM_NUMBER` | E.164, e.g. `+14155552671` | Optional |
-| `DIGILOCKER_CLIENT_ID` | From your Aadhaar provider | Optional — stub used if blank |
-| `DIGILOCKER_CLIENT_SECRET` | From your Aadhaar provider | Optional |
-| `AWS_REGION` | e.g. `ap-south-1` | Required if using Rekognition |
-| `AWS_ACCESS_KEY_ID` | IAM key with Rekognition permission | Optional — stub used if blank |
-| `AWS_SECRET_ACCESS_KEY` | IAM secret | Optional |
-| `CLOUDINARY_CLOUD_NAME` | From Cloudinary dashboard | **Yes for prod uploads** |
-| `CLOUDINARY_API_KEY` | From Cloudinary dashboard | **Yes for prod uploads** |
-| `CLOUDINARY_API_SECRET` | From Cloudinary dashboard | **Yes for prod uploads** |
-| `GOOGLE_VISION_API_KEY` | From GCP console | Optional — stub used if blank |
-
-> **Why Cloudinary is required in prod:** Vercel's filesystem is read-only at runtime, so the dev fallback that writes to `public/uploads/` will fail. Set the three Cloudinary keys before any user uploads a photo on a live deploy.
-
-> **Tip:** If you've already filled `.env` locally, you can paste it into the Vercel dashboard via **Settings → Environment Variables → Import .env** to add many keys at once.
-
-### Step 5 — Deploy
-
-Click **Deploy**. The first build takes ~2 minutes (install + Prisma generate + Next build). You'll get a URL like `https://presenz-xxx.vercel.app`.
-
-Every push to `main` ships to production. Every push to any other branch creates a preview deployment with its own URL.
-
-### Step 6 — (Optional) Custom domain
-
-**Project → Settings → Domains → Add**. Vercel will give you DNS records to point at. Once the domain is live, update `NEXTAUTH_URL` in Vercel env vars to the custom domain, then redeploy.
+This allows the core application flow to be developed without requiring production credentials.
 
 ---
 
-## Folder structure
+# ☁️ Deployment
 
-```
-presenz/
-  app/                 # pages + route handlers
-    api/
-      auth/[...nextauth]/route.ts
-      otp/{send,verify}/route.ts
-      verify/{aadhaar,face}/route.ts
-      profile/{route.ts, photo/route.ts}
-    onboarding/page.tsx
-    verify/{aadhaar, face}/page.tsx
-    profile/create/page.tsx
-    dashboard/page.tsx
-  components/          # UI primitives + landing + onboarding
-  lib/
-    db.ts              # Prisma singleton
-    auth.ts            # NextAuth credentials provider
-    rate-limit.ts      # in-memory token bucket
-    services/          # Twilio / DigiLocker / Rekognition / Vision / upload — stubs + live
-    prompts.ts         # 12 prompts + interest tags
-    utils.ts session.ts
-  prisma/schema.prisma
-  vercel.json next.config.js tailwind.config.ts
-```
+Presenz is configured for deployment on **Vercel**.
 
-## Architectural notes
+The deployment configuration includes:
 
-- **Service stubs swap to live by env presence.** Each integration in `lib/services/*` exports a `getXService()` factory that returns the live implementation when its keys are set, otherwise the stub. Zero UI changes to go live.
-- **Hard caps live at the API layer.** OTP attempts (3), photo count (3–6), 4-of-12 prompts, the 3-message-per-match cap (next-turn) are all enforced server-side via Zod + Prisma, not just UI.
-- **Rate limiting is in-process.** `lib/rate-limit.ts` is a single-process token bucket — fine for a single Vercel function instance, but **swap for Upstash Redis (`@upstash/ratelimit`) before scaling**, otherwise each function invocation gets its own bucket.
-- **OTP state is in the DB, not memory.** Survives serverless cold starts.
-- **Prisma client uses the Node runtime.** All API routes use the default Node runtime (not edge) because Prisma needs it.
+- Frozen pnpm lockfile installation
+- Prisma generation
+- Node runtime configuration
+- Function memory configuration
+- API cache controls
+- Security headers
+- Production environment configuration
 
-## Going live checklist
-
-Before flipping to real users:
-
-- [ ] Replace in-process rate limiter with Upstash Redis
-- [ ] Add `prisma migrate dev` workflow + `prisma migrate deploy` to `buildCommand`
-- [ ] Set `CLOUDINARY_*` (Vercel filesystem is read-only)
-- [ ] Set `TWILIO_*` (real OTP delivery)
-- [ ] Wire real Aadhaar provider (Karza / Signzy / DigiLocker partner)
-- [ ] Set `AWS_*` for Rekognition liveness + match
-- [ ] Set `GOOGLE_VISION_API_KEY` for SafeSearch
-- [ ] Add Sentry / observability
-- [ ] Enable Vercel Web Analytics
-- [ ] Add a backup schedule on the production database
+For production image uploads, **Cloudinary** is required because the Vercel filesystem is read-only at runtime.
 
 ---
 
-## Credits
+# 🔮 Future Development
 
-Presenz was created and developed by **Sagar U** — built from scratch as a premium dating experience for real connections in India.
+Potential areas for further development include:
+
+- [ ] Real-time chat experience
+- [ ] Advanced matching algorithms
+- [ ] Production-grade rate limiting with Redis
+- [ ] Enhanced identity verification
+- [ ] Push notification workflows
+- [ ] Mobile dashboard and matching experience
+- [ ] Biometric authentication
+- [ ] Advanced recommendation system
+- [ ] Analytics and observability
+- [ ] Expanded subscription features
+
+---
+
+# 📌 Product Philosophy
+
+Presenz is built around a simple product philosophy:
+
+```text
+Less Swiping
+     ↓
+More Intentional Matching
+     ↓
+Less Endless Chatting
+     ↓
+More Real Conversations
+     ↓
+More Real-World Connections
+```
+
+The product focuses on creating a dating experience where **meeting someone in person is the destination, not an afterthought.**
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.
+
+See the [LICENSE](LICENSE) file for details.
+
+---
+
+<div align="center">
+
+## 💜 Presenz
+
+**Meet in person. Or not at all.**
+
+Built with **Next.js • TypeScript • PostgreSQL • Prisma**
+
+### Created by **Sagar U.**
+
+⭐ If you find this project interesting, consider giving it a star.
+
+</div>
